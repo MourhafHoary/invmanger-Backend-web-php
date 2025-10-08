@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="center">
+        <h1>Sign Up</h1>
+        <form id="signUpForm">
+            <div class="txt_filed">
+                <input type="text" id="username" name="username" required>
+                <span></span>
+                <label>Username</label>
+            </div>
+            <div class="txt_filed">
+                <input type="email" id="email" name="email" required>
+                <span></span>
+                <label>Email</label>
+            </div>
+            <div class="txt_filed">
+                <input type="password" id="password" name="password" required>
+                <span></span>
+                <label>Password</label>
+            </div>
+            <div class="txt_filed">
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <span></span>
+                <label>Confirm Password</label>
+            </div>
+            <div class="txt_filed">
+                <input type="tel" id="phone" name="phone" required>
+                <span></span>
+                <label>Phone</label>
+            </div>
+            <input type="submit" value="Sign Up">
+            <div id="message" style="margin-top:10px;color:#e00;"></div>
+            <div class="signup-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </form>
+    </div>
+    <script src="api.js"></script>
+    <script src="signup.js"></script>
+</body>
+</html>
