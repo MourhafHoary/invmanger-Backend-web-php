@@ -14,6 +14,7 @@ invmanger_web/
 │   └── forgot-password.js  # Password recovery controller
 ├── models/          # Contains data models
 │   └── api.js       # API client for backend communication
+├── index.html       # Main landing page (entry point)
 ├── views/           # Contains all HTML views
 │   ├── login.html   # Login page
 │   ├── signup.html  # Signup page
@@ -30,9 +31,10 @@ invmanger_web/
 
 ## How to Use
 
-1. Access the application through `index.php`
-2. The application will redirect to the login page
-3. Users can authenticate, sign up, or recover passwords
+1. Access the application through `index.html` or `index.php`
+2. The landing page presents options to login or sign up
+3. Users can authenticate, register new accounts, verify email, or recover passwords
+4. After successful authentication, users are redirected to the home dashboard
 
 ## Development
 

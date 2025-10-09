@@ -11,6 +11,6 @@ define('MODELS_PATH', BASE_PATH . '/models');
 define('CONTROLLERS_PATH', BASE_PATH . '/controllers');
 define('PUBLIC_PATH', BASE_PATH . '/public');
 
-// Redirect to login page
-header('Location: views/login.html');
+// Redirect to main landing page
+header('Location: index.html');
 exit;
