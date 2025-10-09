@@ -43,8 +43,8 @@ const VerifyModel = {
     
     if (!verificationCode) {
       errors.push('Verification code is required');
-    } else if (!/^\d{6}$/.test(verificationCode)) {
-      errors.push('Verification code must be 6 digits');
+    } else if (!/^\d{5}$/.test(verificationCode)) {
+      errors.push('Verification code must be 5 digits');
     }
     
     return errors;

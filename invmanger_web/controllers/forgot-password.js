@@ -126,8 +126,7 @@ class ForgotPasswordView {
       document.getElementById('digit2'),
       document.getElementById('digit3'),
       document.getElementById('digit4'),
-      document.getElementById('digit5'),
-      document.getElementById('digit6')
+      document.getElementById('digit5')
     ];
     this.verificationCodeInput = document.getElementById('verificationCode');
     this.resendCodeBtn = document.getElementById('resendCodeBtn');
@@ -391,8 +390,8 @@ class ForgotPasswordController {
   async handleVerifyCode() {
     const code = this.view.getVerificationCode();
     
-    if (!code || code.length !== 6) {
-      this.view.showMessage('Please enter the 6-digit verification code', true);
+    if (!code || code.length !== 5) {
+      this.view.showMessage('Please enter the 5-digit verification code', true);
       return;
     }
     
