@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Inventory Manager</title>
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Create Account</h1>
+      <p>Sign up to get started with Inventory Manager</p>
+    </div>
+    
+    <form id="signupForm" class="auth-form">
+      <div class="form-group">
+        <input type="text" id="username" placeholder="Username" required>
+        <label for="username">Username</label>
+      </div>
+      
+      <div class="form-group">
+        <input type="email" id="email" placeholder="Email" required>
+        <label for="email">Email</label>
+      </div>
+      
+      <div class="form-group">
+        <input type="password" id="password" placeholder="Password" required>
+        <label for="password">Password</label>
+        <div class="password-toggle">
+          <i class="fas fa-eye-slash" id="togglePassword"></i>
+        </div>
+        <div class="password-strength" id="passwordStrength">
+          <div class="strength-meter">
+            <div class="strength-meter-fill" id="strengthMeter"></div>
+          </div>
+          <span id="strengthText">Password strength</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <label for="confirmPassword">Confirm Password</label>
+      </div>
+      
+      <div class="form-group">
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <label for="phone">Phone Number</label>
+      </div>
+      
+      <button type="submit" class="btn" id="signupBtn">
+        <span id="signupBtnText">Sign Up</span>
+        <span id="signupSpinner" class="spinner" style="display: none;"></span>
+      </button>
+      
+      <div id="message" class="message" style="display: none;"></div>
+      
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Login</a>
+      </div>
+      
+      <div class="social-login">
+        <button type="button" class="social-btn" title="Sign up with Google">
+          <i class="fab fa-google" style="color: #DB4437;"></i>
+        </button>
+        <button type="button" class="social-btn" title="Sign up with Facebook">
+          <i class="fab fa-facebook-f" style="color: #4267B2;"></i>
+        </button>
+        <button type="button" class="social-btn" title="Sign up with Apple">
+          <i class="fab fa-apple" style="color: #000000;"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <script src="../public/js/api.js"></script>
+  <script src="../public/js/signup.js"></script>
+</body>
+</html>

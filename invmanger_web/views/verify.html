@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Account | Inventory Manager</title>
+  <link rel="stylesheet" href="../public/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Verify Your Account</h1>
+      <p>Enter the verification code sent to your email</p>
+    </div>
+    
+    <form id="verifyForm" class="auth-form">
+      <div class="form-group">
+        <input type="email" id="email" placeholder="Email" required />
+        <label for="email">Email</label>
+      </div>
+      
+      <div class="verification-code-container">
+        <label class="verification-label">Verification Code</label>
+        <div class="verification-inputs">
+          <input type="text" id="verfiycode" maxlength="6" placeholder="Enter 6-digit code" required />
+        </div>
+        <p class="verification-hint">Didn't receive a code? <a href="#" id="resendCode">Resend</a></p>
+      </div>
+      
+      <button type="submit" class="auth-button" id="verifyButton">
+        <span class="button-text">Verify Account</span>
+        <span class="spinner" id="verifySpinner"></span>
+      </button>
+      
+      <div id="message" class="auth-message"></div>
+    </form>
+    
+    <div class="auth-footer">
+      <p>Return to <a href="login.html">Login</a></p>
+    </div>
+  </div>
+  
+  <script src="../public/js/api.js"></script>
+  <script src="../public/js/verify.js"></script>
+</body>
+</html>
+
