@@ -1,5 +1,6 @@
 <?php
 include "connect.php" ;
+
 $table = "product" ;
 $name = filterRequest("name") ;
 $desc = filterRequest("desc") ;
@@ -14,8 +15,7 @@ $data = array(
     "product_quantity" => $quantity ,
     "product_price" => $price ,
     "product_image" => $image ,
-    "product_catid" => $cateid
+    "product_catid" => $cateid ,
 ) ;
 insertData($table,$data);
-
 ?>
