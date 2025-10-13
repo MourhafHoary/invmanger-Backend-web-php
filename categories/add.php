@@ -1,14 +1,18 @@
 <?php
 include "../connect.php" ;
+
 $name = filterRequest("name") ; 
-$imagename = imageUpload("" , "files") ;
 $section = filterRequest("section");
+
+// Handle image upload with proper error checking
+$imagename = imageUpload("../uploads" , "image") ;
 
 $data = array(
     "categories_name" => $name ,
-    "categoties_image" => $imagename,
-    "categories_section" => $section
+    "categories_image" => $imagename,
+    "categories_section" => $section,
 );
+
 insertData("categories",$data) ;
 
 ?>

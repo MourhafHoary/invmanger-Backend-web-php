@@ -10,7 +10,23 @@ define("MB", 1048576);
 
 function filterRequest($requestname)
 {
-  return  htmlspecialchars(strip_tags($_POST[$requestname]));
+    // تحقق من POST أولاً
+    if(isset($_POST[$requestname])) {
+        return htmlspecialchars(strip_tags($_POST[$requestname]));
+    }
+    // تحقق من GET
+    elseif(isset($_GET[$requestname])) {
+        return htmlspecialchars(strip_tags($_GET[$requestname]));
+    }
+    // تحقق من input stream لطلبات JSON
+    elseif($requestname && file_get_contents('php://input')) {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if(isset($input[$requestname])) {
+            return htmlspecialchars(strip_tags($input[$requestname]));
+        }
+    }
+    
+    return ""; // إرجاع قيمة فارغة بدلاً من خطأ
 }
 //===========for geting all data===========//
 function getAllData($table, $where = null, $values = null, $json=true)

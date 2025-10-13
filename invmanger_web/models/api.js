@@ -75,7 +75,9 @@ window.API = {
       const pwd = password || verificationCode;
       return this.resetPassword(email, pwd);
     }
+    
   }
+  
 };
 
 // Utility to normalize API responses and extract message if present
@@ -107,3 +109,4 @@ window.APIUtil = {
     return 'An error occurred';
   }
 };
+

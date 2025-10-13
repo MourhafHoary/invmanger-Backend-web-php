@@ -8,7 +8,7 @@ $name = filterRequest("name") ;
 
 $oldimage = filterRequest("oldimage") ;
 
-$newimage = imageUpload("" ,"files") ;
+$newimage = imageUpload("../uploads" ,"files") ;
 
 if($newimage == "empty") {
     array(
@@ -16,10 +16,10 @@ if($newimage == "empty") {
     );
 }
     else {
-        deleteFile("",$oldimage) ;
+        deleteFile("../uploads",$oldimage) ;
         $data = array(
             "categories_name" => $name ,
             "categories_image" => $newimage
         );
     }
-updateData($table,$data,"categories_id=$catid") ;
+updateData($table,$data,"categories_id= '$catid' ") ;

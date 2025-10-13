@@ -1,8 +1,8 @@
 <?php
-include "connect.php" ;
+include "../connect.php" ;
 $proid = filterRequest("proid") ;
 $image = filterRequest("image") ;
 
-deleteFile("" , $image) ;
+deleteFile("../uploads" , $image) ;
 deleteData("products" , "products_id=$proid") ;
 ?>
