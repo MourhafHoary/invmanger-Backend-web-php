@@ -1,38 +1,117 @@
 /**
  * Verify.js - Handles the account verification functionality
- * Part of the MVC pattern: Model, View, and Controller for verification
  */
 
-// Model - Data handling functions
-const VerifyModel = {
-  // Attempt to verify account with provided code
-  async verifyCode(email, verificationCode) {
+// Initialize DOM elements when the document is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initVerificationPage();
+});
+
+function initVerificationPage() {
+  // Get DOM elements
+  const form = document.getElementById('verifyForm');
+  const emailInput = document.getElementById('email');
+  const codeInput = document.getElementById('verfiycode');
+  const verifyButton = document.getElementById('verifyButton');
+  const verifySpinner = document.getElementById('verifySpinner');
+  const messageElement = document.getElementById('message');
+  const resendLink = document.getElementById('resendCode');
+  
+  // Auto-focus verification code input if email is in URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const emailParam = urlParams.get('email');
+  if (emailParam) {
+    emailInput.value = emailParam;
+    codeInput.focus();
+  }
+  
+  // Add event listeners
+  if (form) {
+    form.addEventListener('submit', handleVerify);
+  }
+  
+  if (resendLink) {
+    resendLink.addEventListener('click', handleResendCode);
+  }
+  
+  // Handle form submission
+  async function handleVerify(e) {
+    e.preventDefault();
+    clearMessages();
+    
+    // Get form values
+    const email = emailInput.value.trim();
+    const verificationCode = codeInput.value.trim();
+    
+    // Validate input
+    const errors = validateInput(email, verificationCode);
+    if (errors.length > 0) {
+      showError(errors.join('<br>'));
+      return;
+    }
+    
+    // Show loading state
+    showLoading();
+    
+    // Attempt verification
     try {
-      return await window.API.verifyCode(email, verificationCode);
+      const result = await window.API.verifyCode(email, verificationCode);
+      
+      if (result.status === 'success') {
+        showSuccess('Verification successful! Redirecting...');
+        
+        // Redirect to home page after successful verification
+        setTimeout(() => {
+          window.location.href = 'home.html';
+        }, 1500);
+      } else {
+        const msg = window.APIUtil.getMessage(result) || 'Verification failed';
+        showError(msg);
+      }
     } catch (error) {
       console.error('Verification error:', error);
-      return { status: 'error', message: 'Connection error' };
+      showError('Connection error');
+    } finally {
+      hideLoading();
     }
-  },
+  }
   
-  // Request a new verification code
-  async resendCode(email) {
+  // Handle resend code request
+  async function handleResendCode(e) {
+    e.preventDefault();
+    
+    const email = emailInput.value.trim();
+    if (!email) {
+      showError('Please enter your email address to resend the code');
+      return;
+    }
+    
+    // Start cooldown
+    startResendCooldown();
+    
+    // Request new code
     try {
       // Check if the API has a resend verification code method
       if (window.API.resendVerificationCode) {
-        return await window.API.resendVerificationCode(email);
+        const result = await window.API.resendVerificationCode(email);
+        
+        if (result.status === 'success') {
+          showResendSuccess();
+        } else {
+          const msg = window.APIUtil.getMessage(result) || 'Failed to resend code';
+          showError(msg);
+        }
       } else {
-        // Fallback if the API doesn't have this method
-        return { status: 'error', message: 'Resend functionality not available' };
+        showError('Resend functionality not available');
       }
     } catch (error) {
       console.error('Resend code error:', error);
-      return { status: 'error', message: 'Connection error' };
+      showError('Connection error');
     }
-  },
+  }
   
   // Validate input fields
-  validateInput(email, verificationCode) {
+  function validateInput(email, verificationCode) {
     const errors = [];
     
     if (!email) {
@@ -49,57 +128,45 @@ const VerifyModel = {
     
     return errors;
   }
-};
-
-// View - UI manipulation functions
-const VerifyView = {
-  // DOM elements
-  elements: {
-    form: document.getElementById('verifyForm'),
-    email: document.getElementById('email'),
-    verificationCode: document.getElementById('verfiycode'),
-    verifyButton: document.getElementById('verifyButton'),
-    verifySpinner: document.getElementById('verifySpinner'),
-    message: document.getElementById('message'),
-    resendLink: document.getElementById('resendCode')
-  },
+  
+  // UI Helper Functions
   
   // Show loading state
-  showLoading() {
-    this.elements.verifyButton.disabled = true;
-    this.elements.verifySpinner.style.display = 'inline-block';
-    this.elements.verifyButton.querySelector('.button-text').style.opacity = '0.5';
-  },
+  function showLoading() {
+    verifyButton.disabled = true;
+    verifySpinner.style.display = 'inline-block';
+    verifyButton.querySelector('.button-text').style.opacity = '0.5';
+  }
   
   // Hide loading state
-  hideLoading() {
-    this.elements.verifyButton.disabled = false;
-    this.elements.verifySpinner.style.display = 'none';
-    this.elements.verifyButton.querySelector('.button-text').style.opacity = '1';
-  },
+  function hideLoading() {
+    verifyButton.disabled = false;
+    verifySpinner.style.display = 'none';
+    verifyButton.querySelector('.button-text').style.opacity = '1';
+  }
   
   // Show success message
-  showSuccess(message) {
-    this.elements.message.className = 'auth-message success';
-    this.elements.message.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    this.elements.message.style.display = 'block';
-  },
+  function showSuccess(message) {
+    messageElement.className = 'auth-message success';
+    messageElement.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    messageElement.style.display = 'block';
+  }
   
   // Show error message
-  showError(message) {
-    this.elements.message.className = 'auth-message error';
-    this.elements.message.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    this.elements.message.style.display = 'block';
-  },
+  function showError(message) {
+    messageElement.className = 'auth-message error';
+    messageElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    messageElement.style.display = 'block';
+  }
   
   // Show resend success
-  showResendSuccess() {
+  function showResendSuccess() {
     const resendMsg = document.createElement('div');
     resendMsg.className = 'resend-success';
     resendMsg.innerHTML = '<i class="fas fa-check-circle"></i> New code sent!';
     
     // Insert after the resend link
-    this.elements.resendLink.parentNode.appendChild(resendMsg);
+    resendLink.parentNode.appendChild(resendMsg);
     
     // Remove after 3 seconds
     setTimeout(() => {
@@ -107,11 +174,10 @@ const VerifyView = {
         resendMsg.parentNode.removeChild(resendMsg);
       }
     }, 3000);
-  },
+  }
   
-  // Start resend cooldown
-  startResendCooldown(seconds = 60) {
-    const resendLink = this.elements.resendLink;
+  // Start cooldown for resend button
+  function startResendCooldown(seconds = 60) {
     const originalText = resendLink.textContent;
     resendLink.style.pointerEvents = 'none';
     resendLink.style.opacity = '0.5';
@@ -130,95 +196,11 @@ const VerifyView = {
         resendLink.textContent = `Resend (${timeLeft}s)`;
       }
     }, 1000);
-  },
+  }
   
   // Clear all messages
-  clearMessages() {
-    this.elements.message.style.display = 'none';
-    this.elements.message.textContent = '';
+  function clearMessages() {
+    messageElement.style.display = 'none';
+    messageElement.textContent = '';
   }
-};
-
-// Controller - Event handlers and business logic
-const VerifyController = {
-  init() {
-    // Initialize event listeners
-    VerifyView.elements.form.addEventListener('submit', this.handleVerify.bind(this));
-    
-    if (VerifyView.elements.resendLink) {
-      VerifyView.elements.resendLink.addEventListener('click', this.handleResendCode.bind(this));
-    }
-    
-    // Auto-focus verification code input if email is in URL params
-    const urlParams = new URLSearchParams(window.location.search);
-    const emailParam = urlParams.get('email');
-    if (emailParam) {
-      VerifyView.elements.email.value = emailParam;
-      VerifyView.elements.verificationCode.focus();
-    }
-  },
-  
-  // Handle verification form submission
-  async handleVerify(e) {
-    e.preventDefault();
-    VerifyView.clearMessages();
-    
-    const email = VerifyView.elements.email.value.trim();
-    const verificationCode = VerifyView.elements.verificationCode.value.trim();
-    
-    // Validate input
-    const errors = VerifyModel.validateInput(email, verificationCode);
-    if (errors.length > 0) {
-      VerifyView.showError(errors.join('<br>'));
-      return;
-    }
-    
-    // Show loading state
-    VerifyView.showLoading();
-    
-    // Attempt to verify
-    const result = await VerifyModel.verifyCode(email, verificationCode);
-    
-    // Hide loading state
-    VerifyView.hideLoading();
-    
-    if (result.status === 'success') {
-      VerifyView.showSuccess('Verification successful! Redirecting...');
-      setTimeout(() => {
-        window.location.href = 'home.html';
-      }, 1500);
-    } else {
-      const msg = window.APIUtil.getMessage(result) || 'Verification failed';
-      VerifyView.showError(msg);
-    }
-  },
-  
-  // Handle resend code request
-  async handleResendCode(e) {
-    e.preventDefault();
-    
-    const email = VerifyView.elements.email.value.trim();
-    if (!email) {
-      VerifyView.showError('Please enter your email address to resend the code');
-      return;
-    }
-    
-    // Start cooldown
-    VerifyView.startResendCooldown();
-    
-    // Request new code
-    const result = await VerifyModel.resendCode(email);
-    
-    if (result.status === 'success') {
-      VerifyView.showResendSuccess();
-    } else {
-      const msg = window.APIUtil.getMessage(result) || 'Failed to resend code';
-      VerifyView.showError(msg);
-    }
-  }
-};
-
-// Initialize the controller when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  VerifyController.init();
-});
+}

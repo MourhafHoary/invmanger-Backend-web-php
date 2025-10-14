@@ -134,7 +134,7 @@ const LoginController = {
         
         // Redirect after a short delay
         setTimeout(() => {
-          window.location.href = 'home.html';
+          window.location.href = './home.php';
         }, 1000);
       } else {
         const msg = window.APIUtil.getMessage(result) || 'Invalid credentials';

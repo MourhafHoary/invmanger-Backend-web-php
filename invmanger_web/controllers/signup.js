@@ -1,63 +1,113 @@
 /**
  * Signup.js - Handles the signup functionality
- * Part of the MVC pattern: Controller for signup view
  */
 
-// Model - Data handling functions
-const SignupModel = {
-  // Attempt to register a new user
-  async signup(username, email, password, phone) {
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  initSignupPage();
+});
+
+function initSignupPage() {
+  // Get DOM elements
+  const form = document.getElementById('signupForm');
+  const usernameInput = document.getElementById('username');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirmPassword');
+  const phoneInput = document.getElementById('phone');
+  const signupBtn = document.getElementById('signupBtn');
+  const signupBtnText = document.getElementById('signupBtnText');
+  const signupSpinner = document.getElementById('signupSpinner');
+  const messageElement = document.getElementById('message');
+  const togglePassword = document.getElementById('togglePassword');
+  const strengthMeter = document.getElementById('strengthMeter');
+  const strengthText = document.getElementById('strengthText');
+  const passwordStrength = document.getElementById('passwordStrength');
+  
+  // Set up event listeners
+  if (form) {
+    form.addEventListener('submit', handleSubmit);
+  }
+  
+  if (passwordInput) {
+    passwordInput.addEventListener('input', handlePasswordInput);
+  }
+  
+  if (togglePassword) {
+    togglePassword.addEventListener('click', togglePasswordVisibility);
+  }
+  
+  // Add input event listeners to clear error messages when user types
+  const inputFields = [usernameInput, emailInput, passwordInput, confirmPasswordInput, phoneInput];
+  inputFields.forEach(field => {
+    if (field) {
+      field.addEventListener('input', clearMessages);
+    }
+  });
+  
+  // Focus on username field when page loads
+  if (usernameInput) {
+    usernameInput.focus();
+  }
+  
+  // Handle password input for strength meter
+  function handlePasswordInput() {
+    const password = passwordInput.value;
+    const strength = checkPasswordStrength(password);
+    updatePasswordStrength(strength);
+  }
+  
+  // Handle form submission
+  async function handleSubmit(e) {
+    e.preventDefault();
+    clearMessages();
+    
+    // Get form values
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const confirmPassword = confirmPasswordInput.value.trim();
+    const phone = phoneInput.value.trim();
+    
+    // Validate input
+    const errors = validateInput(username, email, password, confirmPassword, phone);
+    if (errors.length > 0) {
+      showError(errors.join('<br>'));
+      return;
+    }
+    
+    // Show loading state
+    showLoading();
+    
     try {
-      return await window.API.signup(username, email, password, phone);
+      // Attempt signup
+      const result = await window.API.signup(username, email, password, phone);
+      
+      if (result.status === 'success') {
+        showSuccess('Account created successfully! Redirecting to verification...');
+        
+        // Store email for verification page
+        localStorage.setItem('verification_email', email);
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.location.href = 'verify.html';
+        }, 1500);
+      } else {
+        const msg = window.APIUtil.getMessage(result) || 'Registration failed';
+        showError(msg);
+      }
     } catch (error) {
       console.error('Signup error:', error);
-      return { status: 'error', message: 'Connection error' };
+      showError('Connection error. Please try again later.');
+    } finally {
+      hideLoading();
     }
-  },
-  
-  // Validate user input
-  validateInput(username, email, password, confirmPassword, phone) {
-    const errors = [];
-    
-    // Username validation
-    if (!username) {
-      errors.push('Username is required');
-    } else if (username.length < 3) {
-      errors.push('Username must be at least 3 characters');
-    }
-    
-    // Email validation
-    if (!email) {
-      errors.push('Email is required');
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.push('Please enter a valid email address');
-    }
-    
-    // Password validation
-    if (!password) {
-      errors.push('Password is required');
-    } else if (password.length < 6) {
-      errors.push('Password must be at least 6 characters');
-    }
-    
-    // Confirm password validation
-    if (password !== confirmPassword) {
-      errors.push('Passwords do not match');
-    }
-    
-    // Phone validation
-    if (!phone) {
-      errors.push('Phone number is required');
-    } else if (!/^\d{10,15}$/.test(phone.replace(/[\s-+()]/g, ''))) {
-      errors.push('Please enter a valid phone number');
-    }
-    
-    return errors;
-  },
+  }
   
   // Check password strength
-  checkPasswordStrength(password) {
-    if (!password) return { score: 0, text: 'No password' };
+  function checkPasswordStrength(password) {
+    if (!password) return { score: 0, text: 'No password', percentage: 0 };
     
     let score = 0;
     
@@ -95,67 +145,92 @@ const SignupModel = {
     
     return { score, text, percentage };
   }
-};
-
-// View - UI manipulation functions
-const SignupView = {
-  // DOM elements
-  elements: {
-    form: document.getElementById('signupForm'),
-    username: document.getElementById('username'),
-    email: document.getElementById('email'),
-    password: document.getElementById('password'),
-    confirmPassword: document.getElementById('confirmPassword'),
-    phone: document.getElementById('phone'),
-    signupBtn: document.getElementById('signupBtn'),
-    signupBtnText: document.getElementById('signupBtnText'),
-    signupSpinner: document.getElementById('signupSpinner'),
-    message: document.getElementById('message'),
-    togglePassword: document.getElementById('togglePassword'),
-    strengthMeter: document.getElementById('strengthMeter'),
-    strengthText: document.getElementById('strengthText'),
-    passwordStrength: document.getElementById('passwordStrength')
-  },
+  
+  // Validate input fields
+  function validateInput(username, email, password, confirmPassword, phone) {
+    const errors = [];
+    
+    // Username validation
+    if (!username) {
+      errors.push('Username is required');
+    } else if (username.length < 3) {
+      errors.push('Username must be at least 3 characters');
+    }
+    
+    // Email validation
+    if (!email) {
+      errors.push('Email is required');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.push('Please enter a valid email address');
+    }
+    
+    // Password validation
+    if (!password) {
+      errors.push('Password is required');
+    } else if (password.length < 6) {
+      errors.push('Password must be at least 6 characters');
+    }
+    
+    // Confirm password validation
+    if (password !== confirmPassword) {
+      errors.push('Passwords do not match');
+    }
+    
+    // Phone validation
+    if (!phone) {
+      errors.push('Phone number is required');
+    } else if (!/^\d{10,15}$/.test(phone.replace(/[\s-+()]/g, ''))) {
+      errors.push('Please enter a valid phone number');
+    }
+    
+    return errors;
+  }
+  
+  // UI Helper Functions
   
   // Show loading state
-  showLoading() {
-    this.elements.signupBtnText.textContent = 'Creating Account...';
-    this.elements.signupSpinner.style.display = 'inline-block';
-    this.elements.signupBtn.disabled = true;
-  },
+  function showLoading() {
+    signupBtnText.textContent = 'Creating Account...';
+    signupSpinner.style.display = 'inline-block';
+    signupBtn.disabled = true;
+  }
   
   // Hide loading state
-  hideLoading() {
-    this.elements.signupBtnText.textContent = 'Sign Up';
-    this.elements.signupSpinner.style.display = 'none';
-    this.elements.signupBtn.disabled = false;
-  },
-  
-  // Show error message
-  showError(message) {
-    this.elements.message.className = 'message error';
-    this.elements.message.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    this.elements.message.style.display = 'block';
-  },
+  function hideLoading() {
+    signupBtnText.textContent = 'Sign Up';
+    signupSpinner.style.display = 'none';
+    signupBtn.disabled = false;
+  }
   
   // Show success message
-  showSuccess(message) {
-    this.elements.message.className = 'message success';
-    this.elements.message.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    this.elements.message.style.display = 'block';
-  },
+  function showSuccess(message) {
+    messageElement.className = 'message success';
+    messageElement.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    messageElement.style.display = 'block';
+  }
   
-  // Clear all messages
-  clearMessages() {
-    this.elements.message.style.display = 'none';
-    this.elements.message.textContent = '';
-  },
+  // Show error message
+  function showError(message) {
+    messageElement.className = 'message error';
+    messageElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    messageElement.style.display = 'block';
+  }
+  
+  // Toggle password visibility
+  function togglePasswordVisibility() {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    
+    // Toggle icon
+    togglePassword.classList.toggle('fa-eye');
+    togglePassword.classList.toggle('fa-eye-slash');
+  }
   
   // Update password strength indicator
-  updatePasswordStrength(strength) {
-    this.elements.passwordStrength.style.display = 'block';
-    this.elements.strengthMeter.style.width = `${strength.percentage}%`;
-    this.elements.strengthText.textContent = strength.text;
+  function updatePasswordStrength(strength) {
+    passwordStrength.style.display = 'block';
+    strengthMeter.style.width = `${strength.percentage}%`;
+    strengthText.textContent = strength.text;
     
     // Update color based on strength
     const colors = {
@@ -165,104 +240,12 @@ const SignupView = {
       'Very Strong': 'var(--success-color)'
     };
     
-    this.elements.strengthMeter.style.backgroundColor = colors[strength.text] || 'var(--primary-color)';
-  },
-  
-  // Toggle password visibility
-  togglePasswordVisibility() {
-    const passwordField = this.elements.password;
-    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordField.setAttribute('type', type);
-    
-    // Toggle icon
-    this.elements.togglePassword.classList.toggle('fa-eye');
-    this.elements.togglePassword.classList.toggle('fa-eye-slash');
+    strengthMeter.style.backgroundColor = colors[strength.text] || 'var(--primary-color)';
   }
-};
-
-// Controller - Event handlers and business logic
-const SignupController = {
-  init() {
-    // Add event listeners
-    SignupView.elements.form.addEventListener('submit', this.handleSubmit.bind(this));
-    SignupView.elements.password.addEventListener('input', this.handlePasswordInput.bind(this));
-    SignupView.elements.togglePassword.addEventListener('click', SignupView.togglePasswordVisibility.bind(SignupView));
-    
-    // Add input event listeners to clear error messages when user types
-    const inputFields = [
-      SignupView.elements.username,
-      SignupView.elements.email,
-      SignupView.elements.password,
-      SignupView.elements.confirmPassword,
-      SignupView.elements.phone
-    ];
-    
-    inputFields.forEach(field => {
-      field.addEventListener('input', SignupView.clearMessages.bind(SignupView));
-    });
-    
-    // Focus on username field when page loads
-    SignupView.elements.username.focus();
-  },
   
-  handlePasswordInput() {
-    const password = SignupView.elements.password.value;
-    const strength = SignupModel.checkPasswordStrength(password);
-    SignupView.updatePasswordStrength(strength);
-  },
-  
-  async handleSubmit(e) {
-    e.preventDefault();
-    
-    // Clear previous messages
-    SignupView.clearMessages();
-    
-    // Get form values
-    const username = SignupView.elements.username.value.trim();
-    const email = SignupView.elements.email.value.trim();
-    const password = SignupView.elements.password.value.trim();
-    const confirmPassword = SignupView.elements.confirmPassword.value.trim();
-    const phone = SignupView.elements.phone.value.trim();
-    
-    // Validate input
-    const errors = SignupModel.validateInput(username, email, password, confirmPassword, phone);
-    if (errors.length > 0) {
-      SignupView.showError(errors.join('<br>'));
-      return;
-    }
-    
-    // Show loading state
-    SignupView.showLoading();
-    
-    try {
-      // Attempt signup
-      const result = await SignupModel.signup(username, email, password, phone);
-      
-      // Process result
-      if (result.status === 'success') {
-        SignupView.showSuccess('Account created successfully! Redirecting to verification...');
-        
-        // Store email for verification page
-        localStorage.setItem('verification_email', email);
-        
-        // Redirect after a short delay
-        setTimeout(() => {
-          window.location.href = 'verify.html';
-        }, 1500);
-      } else {
-        const msg = window.APIUtil.getMessage(result) || 'Registration failed';
-        SignupView.showError(msg);
-        SignupView.hideLoading();
-      }
-    } catch (error) {
-      console.error('Signup error:', error);
-      SignupView.showError('Connection error. Please try again later.');
-      SignupView.hideLoading();
-    }
+  // Clear all messages
+  function clearMessages() {
+    messageElement.style.display = 'none';
+    messageElement.textContent = '';
   }
-};
-
-// Initialize the controller when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  SignupController.init();
-});
+}
