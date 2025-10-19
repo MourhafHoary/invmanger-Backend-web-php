@@ -10,7 +10,7 @@ $catid = filterRequest("catid") ;
 $imagename = filterRequest("imagename") ;
 $newimage = imageUpload("../uploads" , "files") ;
 
-if($newimage == "empty") {
+if($newimage == "fail") {
     $data = array(
         "products_name" => $name ,
         "products_desc" => $desc ,
