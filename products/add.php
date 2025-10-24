@@ -7,7 +7,7 @@ $desc = filterRequest("desc") ;
 $quantity = filterRequest("quantity") ;
 $price = filterRequest("price") ;
 $image = imageUpload("../uploads" , "files") ;
-$cateid = filterRequest("cateid") ;
+$catid = filterRequest("catid") ;
 
 $data = array(
     "products_name" => $name ,
@@ -15,7 +15,7 @@ $data = array(
     "products_quantity" => $quantity ,
     "products_price" => $price ,
     "products_image" => $image ,
-    "products_catid" => $cateid ,
+    "products_catid" => $catid ,
 ) ;
 insertData($table,$data);
 ?>

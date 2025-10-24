@@ -2,7 +2,7 @@
 include "../connect.php" ;
 $table = "categories" ;
 
-$catid = filterRequest("cateid") ;
+$catid = filterRequest("catid") ;
 
 $name = filterRequest("name") ;
 

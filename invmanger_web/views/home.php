@@ -17,248 +17,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background-color: #F8F9FA;
-      margin: 0;
-      padding: 0;
-      direction: rtl;
-      overflow-x: hidden;
-    }
-    
-    .navbar {
-      background-color: #2C7BE5;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      position: fixed;
-      width: 100%;
-      z-index: 1030;
-    }
-    
-    .navbar-brand {
-      font-weight: 700;
-      color: white;
-    }
-    
-    /* Sidebar Styles */
-    .sidebar {
-      height: 100%;
-      width: 250px;
-      position: fixed;
-      top: 56px;
-      right: 0;
-      background-color: #343A40;
-      overflow-x: hidden;
-      transition: 0.3s;
-      padding-top: 20px;
-      z-index: 1020;
-    }
-    
-    .sidebar.collapsed {
-      width: 60px;
-    }
-    
-    .sidebar-header {
-      padding: 0 15px 20px 15px;
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    
-    .sidebar.collapsed .sidebar-header h5 {
-      display: none;
-    }
-    
-    .sidebar-menu {
-      padding: 0;
-      list-style: none;
-    }
-    
-    .sidebar-menu li {
-      margin-bottom: 5px;
-    }
-    
-    .sidebar-menu a {
-      padding: 10px 15px;
-      color: rgba(255,255,255,0.8);
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    
-    .sidebar-menu a:hover, .sidebar-menu a.active {
-      color: white;
-      background-color: rgba(255,255,255,0.1);
-    }
-    
-    .sidebar-menu .menu-icon {
-      margin-left: 10px;
-      font-size: 1.2rem;
-      min-width: 25px;
-      text-align: center;
-    }
-    
-    .sidebar-menu .menu-text {
-      transition: opacity 0.3s;
-    }
-    
-    .sidebar.collapsed .menu-text {
-      display: none;
-    }
-    
-    .sidebar-toggle {
-      position: fixed;
-      top: 70px;
-      right: 250px;
-      background-color: #343A40;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1025;
-      transition: 0.3s;
-    }
-    
-    .sidebar-toggle.collapsed {
-      right: 60px;
-    }
-    
-    /* Main Content Adjustment */
-    .main-content {
-      margin-right: 250px;
-      transition: 0.3s;
-      padding-top: 56px;
-    }
-    
-    .main-content.expanded {
-      margin-right: 60px;
-    }
-    
-    .page-header {
-      background-color: white;
-      padding: 1.5rem 0;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    
-    .page-title {
-      font-weight: 700;
-      color: #343A40;
-      margin-bottom: 0.5rem;
-    }
-    
-    .category-card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      overflow: hidden;
-      height: 100%;
-    }
-    
-    .category-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    }
-    
-    .category-card .card-img-top {
-      height: 180px;
-      object-fit: cover;
-    }
-    
-    .category-card .card-body {
-      padding: 1.25rem;
-    }
-    
-    .category-card .card-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #343A40;
-    }
-    
-    .category-card .card-text {
-      color: #6C757D;
-      font-size: 0.9rem;
-    }
-    
-    .category-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: rgba(44, 123, 229, 0.9);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 3rem;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-    
-    .empty-state i {
-      font-size: 3rem;
-      color: #6C757D;
-      margin-bottom: 1rem;
-    }
-    
-    .empty-state p {
-      color: #6C757D;
-      font-size: 1.1rem;
-    }
-    
-    .footer {
-      background-color: white;
-      padding: 1.5rem 0;
-      margin-top: 3rem;
-      border-top: 1px solid #e0e0e0;
-      text-align: center;
-      transition: 0.3s;
-      margin-right: 250px;
-    }
-    
-    .footer.expanded {
-      margin-right: 60px;
-    }
-    
-    .footer p {
-      color: #6C757D;
-      margin-bottom: 0;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 0;
-        padding-top: 60px;
-      }
-      
-      .sidebar.mobile-open {
-        width: 250px;
-      }
-      
-      .main-content, .footer {
-        margin-right: 0;
-      }
-      
-      .sidebar-toggle {
-        right: 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/home.css">
 </head>
 <body>
   <!-- Navbar -->
@@ -348,10 +107,17 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="page-title"><i class="bi bi-tags me-2"></i>قائمة التصنيفات</h1>
         <p class="text-muted">استعرض جميع التصنيفات المتاحة في النظام</p>
       </div>
-    </div>
+  </div>
 
-    <!-- Categories Grid -->
-    <div class="container">
+  <!-- Top Actions -->
+  <div class="container mt-3 d-flex justify-content-end">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+      <i class="bi bi-plus-circle me-1"></i> إضافة تصنيف
+    </button>
+  </div>
+
+  <!-- Categories Grid -->
+  <div class="container">
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         <?php if (!empty($categories)) : ?>
           <?php foreach ($categories as $cat) : ?>
@@ -511,6 +277,50 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
       // Prevent the click from navigating to the products page
       event.stopPropagation();
     }
+  </script>
+  <!-- Add Category Modal -->
+  <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addCategoryModalLabel">إضافة تصنيف جديد</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addCategoryForm" action="../../categories/add.php" method="POST" enctype="multipart/form-data">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="add_name" class="form-label">اسم التصنيف</label>
+              <input type="text" class="form-control" id="add_name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="add_section" class="form-label">القسم</label>
+              <input type="text" class="form-control" id="add_section" name="section" required>
+            </div>
+            <div class="mb-3">
+              <label for="add_image" class="form-label">صورة التصنيف</label>
+              <input type="file" class="form-control" id="add_image" name="image" accept="image/*" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+            <button type="submit" class="btn btn-primary">إضافة</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Reset add form when the modal opens
+    document.addEventListener('DOMContentLoaded', function() {
+      var addModalEl = document.getElementById('addCategoryModal');
+      if (addModalEl) {
+        addModalEl.addEventListener('show.bs.modal', function () {
+          var form = document.getElementById('addCategoryForm');
+          if (form) { form.reset(); }
+        });
+      }
+    });
   </script>
 </body>
 </html>
