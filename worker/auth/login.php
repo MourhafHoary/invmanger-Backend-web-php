@@ -4,7 +4,7 @@ include "../../connect.php";
 
 $email = filterRequest('email');
 $password = sha1($_POST['password']);
-// $password = filterRequest('password');
+
 
 getData("users",
 "users_email = ? AND
@@ -14,18 +14,18 @@ getData("users",
  ,array($email,$password, "worker", 1));
 
 
-// $stmt = $con->prepare("SELECT * FROM users WHERE `email` = ? AND `password` = ?");
+//? $stmt = $con->prepare("SELECT * FROM users WHERE `email` = ? AND `password` = ?");
  
-//  $stmt->execute(array($email,$pass));
+//?  $stmt->execute(array($email,$pass));
 
-//  $count = $stmt->rowCount() ;
+//?  $count = $stmt->rowCount() ;
 //  if ($count>0){
 //     echo json_encode(array("status" => "success")) ;
 //  }else{
 //     echo json_encode(array("status" => "faild")) ;
 //  }
 
-
+ 
 
 
 ?>
